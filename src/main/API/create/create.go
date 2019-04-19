@@ -1,6 +1,7 @@
 package create
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"html"
@@ -13,6 +14,10 @@ import (
 	"os"
 	"strconv"
 	"time"
+
+	"google.golang.org/api/option"
+
+	firebase "firebase.google.com/go"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/labstack/echo"
@@ -69,6 +74,30 @@ type (
 	}
 
 	// #-- Review --#
+
+	// #-- Place --#
+
+	Place struct {
+		Name    string         `json:"name"`
+		Lat     float32        `json:"lat"`
+		Lon     float32        `json:"lon"`
+		Des     string         `json:"des"`
+		Gallery []PlaceGallery `json:"gallery"`
+	}
+
+	PlaceGallery struct {
+		FirstImage  string `json:"first_image"`
+		SecondImage string `json:"second_image"`
+		ThirdImage  string `json:"third_image"`
+	}
+
+	AvailableItems struct {
+		PlaceID   string `json:"place_id"`
+		ProductID string `json:"product_id"`
+	}
+
+	// #-- Place --#
+
 	CreateError struct {
 		Title   string
 		Message string
@@ -103,6 +132,10 @@ func CreateProductByAdmin(context echo.Context) (err error) {
 	category, err := strconv.Atoi(productStruct.CategoryID)
 	brand, err := strconv.Atoi(productStruct.BrandID)
 
+	t := time.Now()
+
+	thumbnail := t.Format("20060102150405") + productStruct.Thumbnail
+
 	switch err := rowCheckBarCode.Scan(&checkExistBarcodeSQL); err {
 
 	case sql.ErrNoRows:
@@ -114,7 +147,7 @@ func CreateProductByAdmin(context echo.Context) (err error) {
 			return context.JSON(http.StatusOK, response.ResponseMessage("Error SQL", "Failed to insert data.", true, http.StatusOK))
 		}
 
-		_, errRes := stmt.Exec(productStruct.Barcode, productNameJson, productDetailJson, productPriceJson, productStruct.Thumbnail, category, brand)
+		_, errRes := stmt.Exec(productStruct.Barcode, productNameJson, productDetailJson, productPriceJson, thumbnail, category, brand)
 
 		if errRes != nil {
 
@@ -146,7 +179,89 @@ func CreatePlaceByAdmin(context echo.Context) (err error) {
 
 	// Ignition Start!
 
-	return nil
+	placeStruct := new(Place)
+
+	db := database.IgnitionStart()
+
+	if err := context.Bind(placeStruct); err != nil {
+
+		return context.JSON(http.StatusOK, response.ResponseMessage("Error Param", "[POST ERROR PARAMS]", true, http.StatusOK))
+
+	}
+
+	name := html.EscapeString(placeStruct.Name)
+	des := html.EscapeString(placeStruct.Des)
+
+	if validation.ValidateLetter(name) != true {
+
+		return context.JSON(http.StatusOK, response.ResponseMessage("Error Data", "Error Validate text is not a letter", true, http.StatusOK))
+
+	}
+
+	placeGalleryJson, _ := json.Marshal(placeStruct.Gallery)
+
+	checkSQL := `SELECT name FROM places WHERE name=?;`
+
+	rowCheck := db.QueryRow(checkSQL, name)
+
+	switch err := rowCheck.Scan(&name); err {
+
+	case sql.ErrNoRows:
+		stmt, stmtErr := db.Prepare("INSERT INTO places ( name , lat , lon , des , gallery ) VALUES ( ? , ? , ? , ? , ? )")
+
+		if stmtErr != nil {
+
+			defer db.Close()
+			return context.JSON(http.StatusOK, response.ResponseMessage("Error SQL", "Failed to insert data.", true, http.StatusOK))
+
+		}
+
+		_, errRes := stmt.Exec(name, placeStruct.Lat, placeStruct.Lon, des, placeGalleryJson)
+
+		if errRes != nil {
+
+			defer db.Close()
+			return context.JSON(http.StatusOK, response.ResponseMessage("Error SQL", errRes.Error(), true, http.StatusOK))
+
+		}
+
+		defer db.Close()
+		return context.JSON(http.StatusOK, response.ResponseMessage("Success", "Success to insert data to database.", false, http.StatusOK))
+
+	case nil:
+		defer db.Close()
+		return context.JSON(http.StatusOK, response.ResponseMessage("Error SQL", "Data is collision", true, http.StatusOK))
+	default:
+		return context.JSON(http.StatusOK, response.ResponseMessage("Error Switch", "Test", true, http.StatusOK))
+
+	}
+
+}
+
+func CreateAvailableItems(c echo.Context) (err error) {
+
+	availableItems := new(AvailableItems)
+
+	if err := c.Bind(availableItems); err != nil {
+
+		return c.JSON(http.StatusOK, response.ResponseMessage("Error Param", "[POST ERROR PARAMS]", true, http.StatusOK))
+
+	}
+
+	sa := option.WithCredentialsFile("./gcloud_key.json")
+	app, err := firebase.NewApp(context.Background(), nil, sa)
+
+	client, err := app.Firestore(context.Background())
+
+	if err != nil {
+
+		return c.JSON(http.StatusOK, response.ResponseMessage("Error Firebase", "Failed to connect to firebase with credentials file.", true, http.StatusOK))
+
+	}
+
+	defer client.Close()
+
+	return c.JSON(http.StatusOK, response.ResponseMessage("Success", "Successfuly connection [Firebase/Cloud Firestore]", false, http.StatusOK))
 
 }
 
@@ -355,6 +470,96 @@ func CreateProductThumbnail(context echo.Context) (err error) {
 	if _, err = io.Copy(dst, src); err != nil {
 
 		return context.JSON(http.StatusOK, response.ResponseMessage("Error", "Error Receive formfile image 4", true, http.StatusOK))
+
+	}
+
+	return context.JSON(http.StatusOK, response.ResponseMessage("Success", "Uploaded!", false, http.StatusOK))
+
+}
+
+func CreatePlaceGallery(context echo.Context) (err error) {
+
+	firstFile, firstErr := context.FormFile("first_image")
+	secondFile, secondErr := context.FormFile("secode_image")
+	thirdfile, thirdErr := context.FormFile("third_image")
+
+	if firstErr != nil {
+		return context.JSON(http.StatusOK, response.ResponseMessage("Error open file", "Failed to receive file [Image : 1].", true, http.StatusOK))
+	}
+
+	if secondErr != nil {
+		return context.JSON(http.StatusOK, response.ResponseMessage("Error open file", "Failed to receive file [Image : 2]", true, http.StatusOK))
+	}
+
+	if thirdErr != nil {
+		return context.JSON(http.StatusOK, response.ResponseMessage("Error Open file", "Failed to receive file [Image : 3]", true, http.StatusOK))
+	}
+
+	firstSrc, firstSrcErr := firstFile.Open()
+	secondSrc, secondSrcErr := secondFile.Open()
+	thirdSrc, thirdSrcErr := thirdfile.Open()
+
+	if firstSrcErr != nil {
+		return context.JSON(http.StatusOK, response.ResponseMessage("Error open file", "Failed to open file [Image : 1]", true, http.StatusOK))
+	}
+
+	defer firstSrc.Close()
+
+	if secondSrcErr != nil {
+		return context.JSON(http.StatusOK, response.ResponseMessage("Error open file", "Failed to open file [Image : 2]", true, http.StatusOK))
+	}
+
+	defer secondSrc.Close()
+
+	if thirdSrcErr != nil {
+		return context.JSON(http.StatusOK, response.ResponseMessage("Error open file", "Failed to open file [Image : 3]", true, http.StatusOK))
+	}
+
+	defer thirdSrc.Close()
+
+	firstFileDst, errFirstDst := os.Create("payload/place_image/" + firstFile.Filename)
+	secondFileDst, errSecondDst := os.Create("payload/place_image/" + secondFile.Filename)
+	thirdFileDst, errThirdDst := os.Create("payload/place_image/" + thirdfile.Filename)
+
+	if errFirstDst != nil {
+
+		return context.JSON(http.StatusOK, response.ResponseMessage("", "", true, http.StatusOK))
+
+	}
+
+	defer firstFileDst.Close()
+
+	if errSecondDst != nil {
+
+		return context.JSON(http.StatusOK, response.ResponseMessage("", "", true, http.StatusOK))
+
+	}
+
+	defer secondFileDst.Close()
+
+	if errThirdDst != nil {
+
+		return context.JSON(http.StatusOK, response.ResponseMessage("", "", true, http.StatusOK))
+
+	}
+
+	defer thirdFileDst.Close()
+
+	if _, err = io.Copy(firstFileDst, firstSrc); err != nil {
+
+		return context.JSON(http.StatusOK, response.ResponseMessage("Error IO", "Failed to copy src file to dst [Image : 1]", true, http.StatusOK))
+
+	}
+
+	if _, err = io.Copy(secondFileDst, secondSrc); err != nil {
+
+		return context.JSON(http.StatusOK, response.ResponseMessage("Error IO", "Failed to copy src file to dst [Image : 2]", true, http.StatusOK))
+
+	}
+
+	if _, err = io.Copy(thirdFileDst, thirdSrc); err != nil {
+
+		return context.JSON(http.StatusOK, response.ResponseMessage("Error IO", "Failed to copy src file to dst [Image : 3]", true, http.StatusOK))
 
 	}
 

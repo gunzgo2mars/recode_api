@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "recodeapp-b3b99",
+  "private_key_id": "3abdb5e7b4653490e3ddb9eeeac110b8df6a62e2",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCqZ9PwHXvkq/WN\npxpVdLyb6tHXC/OqPy2LNnfa33z86LEAlFI7D6x5q9UCm7jjckJitVd9rdJKtZ2u\nSV+RLCxZP365SPcQDAmeMn3lWn92TyskK4hdSo6KKrCZGofQ9Y6Qw0NBjTADguAM\ntJgLWjEPJ4FqHUre4CwsiZHAlumaPdh/r2QgVzdg2mmAInc2Fny7uDNMVn8Zjs3x\nVJdUB8bjl8yE+ajjcn9MbR6VeCbsWjiM98AcjrHTlRxijAHsE6WH2hF06b2M7+DO\nIdX/7W83zkEv5nssvVeCwXE+KHPVj6cm5sYJQsBWkt2suqb+nN13D7hQEuqHJ4ZD\n6YjJ4gZnAgMBAAECggEAM6syxJI0EEShundKEVJJpB8hzEpH8j2g0h7MXbW5ILhv\nfwT6IAVjHytedaGBAJoTDfn9UtLDOjryWjfOPeb+dXs+sfCxVRDJU8nsiYAUuOtN\nYfS/LsZeDP/ftzSnrNDgDv3d5UDpp47l34Rcu8h3qqgoYeQK4SRo0IJQCuzXXRhX\nznT1BbfWdyLMdvthbfMiG26OcnIqZTMXNVpprUGmTNJo7gGPYvZ6F+rlQDChC+Qy\njIAsac5VUjQ7TJNFgWxtv3Ly9zoSoElAIWDGQ2x+MKW22KSX0rZyzqTSAU4l5IYV\nfcobFr2CjMLZdX6gOunkKijiE1ANUZMghrN2qIIsLQKBgQDY2CADLyuVL4Q/0zJ+\n49XnVMjdchbmtLo5Bal6yhS8bRdjKcFuCFyG+ailx01zlxtWk/WLES4yzamQBK2o\n4c1hzPcOPMbZVZHu2TAUkHq102yMgNpItGRD5l6zfSvIeNv+t0jOue+tBB0tymQi\nSdq8yVY8XBUc78PWZeht70L2mwKBgQDJLQWucvJknq6go0vvT94/qPNX7TeDbcwH\nW+Ul4hUpAHrWJV6qwv8t/opAoqZ872rExXY3uW0r02FceJR/DFl1K1M3VzjQOwBi\nlTHDB762NVDRCmTK20IlH7K6euIncl70Gsa8MwHEwMa0NvoHspYEGp2VYZO7KTKD\nG7TcKrJGJQKBgQCyE2rWspob/dWhhJNnWTuEqj/6e4MLG0gDI/82c1XsF7qpGNVc\nw0kZH1W8LpwQXPt6ci+ncQh7eCHTv8PNeQHtWyFYc9jpCji56WpuuOfNAj+WcwrP\nwjTE/h6vUA/wpjAkUehcvJ1zfHlp7VemQPh9KOrEzuoXxV8SZsYl4eMgGQKBgQCJ\noL5pSQQg6BoplW2mi6pNPOU1evjmdiAFzM1obFHzmftvM2OfSQXQTnoAnAVwJU6S\nzVAB8V4JhHPwEiHtBOLScNBeZNJeSm8KAm1nso27E6B1UjoAOZ33zca1IspDGFBz\niTn6mJ6WHxgRRCcrSvasWhUClB3ABgAjh7nkgWUy7QKBgQCgbo4j+acDufxVbjf2\n7h7DlsMo1TpZaySJhFKHdeJDDZmrWcxUUATwuJrkHXgblVEf45AWDq3BEoo5AFGX\nYsAr2sncdYEiqmISZcYvCulMOqCBXQ3kIiFjoLi9ZnotJN6kKQFfp/LbJGprfBh1\nj1/t22TOlr7UjuIxSxM0BIrxqw==\n-----END PRIVATE KEY-----\n",
+  "client_email": "recodeapp@recodeapp-b3b99.iam.gserviceaccount.com",
+  "client_id": "103551610110734596819",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/recodeapp%40recodeapp-b3b99.iam.gserviceaccount.com"
+}

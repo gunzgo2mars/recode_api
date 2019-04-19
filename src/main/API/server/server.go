@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"main/API/create"
+	"main/API/read"
 	"net/http"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -106,7 +107,14 @@ func InitServer() {
 	admin.POST("/createPlaceByAdmin", create.CreatePlaceByAdmin)
 	admin.POST("/createCategoryByAdmin", create.CreateCategoryByAdmin)
 	admin.POST("/createBrandByAdmin", create.CreateBrandByAdmin)
+	// #Create -> // Firebase [Clound Firestore]
+	admin.POST("/createAvailableItems", create.CreateAvailableItems)
+	// #Create -> // Extension
 	admin.POST("/createExtensionThumbnail", create.CreateProductThumbnail)
+	admin.POST("/createExtensionPlaceGallery", create.CreatePlaceGallery)
+
+	// # Read
+	admin.POST("/readBarcode", read.ReadBarcode)
 
 	// # Delete
 

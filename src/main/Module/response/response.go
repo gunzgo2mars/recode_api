@@ -9,3 +9,27 @@ func ResponseMessage(title string, message string, err bool, status int) map[str
 		"error":   err,
 	}
 }
+
+func ResponseSingleProduct() map[string]interface{} {
+
+	return nil
+
+}
+
+func ResponsePayloadProducts() map[string]interface{} {
+
+	return nil
+
+}
+
+func ResponseSinglePlace() map[string]interface{} {
+
+	return nil
+
+}
+
+func ResponsePayloadPlaces() map[string]interface{} {
+
+	return nil
+
+}
