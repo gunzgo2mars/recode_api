@@ -10,26 +10,15 @@ func ResponseMessage(title string, message string, err bool, status int) map[str
 	}
 }
 
-func ResponseSingleProduct() map[string]interface{} {
+func ResponsePayloadData(title string, message string, err bool, status int, payload map[string]interface{}) map[string]interface{} {
 
-	return nil
+	return map[string]interface{}{
 
-}
-
-func ResponsePayloadProducts() map[string]interface{} {
-
-	return nil
-
-}
-
-func ResponseSinglePlace() map[string]interface{} {
-
-	return nil
-
-}
-
-func ResponsePayloadPlaces() map[string]interface{} {
-
-	return nil
+		"status":  status,
+		"title":   title,
+		"message": message,
+		"error":   err,
+		"payload": payload,
+	}
 
 }

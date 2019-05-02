@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"main/API/create"
+	"main/API/delete"
 	"main/API/read"
 	"net/http"
 
@@ -107,16 +108,23 @@ func InitServer() {
 	admin.POST("/createPlaceByAdmin", create.CreatePlaceByAdmin)
 	admin.POST("/createCategoryByAdmin", create.CreateCategoryByAdmin)
 	admin.POST("/createBrandByAdmin", create.CreateBrandByAdmin)
+	admin.POST("/createNewsByAdmin", create.CreateNewsByAdmin)
+	admin.POST("/createAdminByAdmin", create.CreatAdminByAdmin)
 	// #Create -> // Firebase [Clound Firestore]
 	admin.POST("/createAvailableItems", create.CreateAvailableItems)
 	// #Create -> // Extension
-	admin.POST("/createExtensionThumbnail", create.CreateProductThumbnail)
+	admin.POST("/createExtensionProductThumbnail", create.CreateProductThumbnail)
+	admin.POST("/createExtensionProductGallery", create.CreateProductGallery)
+	admin.POST("/createPlaceThumbnail", create.CreatePlaceThumbnail)
+	admin.POST("/createExtensionNewsThumbnail", create.CreateNewsThumbnail)
 	admin.POST("/createExtensionPlaceGallery", create.CreatePlaceGallery)
+	admin.POST("/createExtensionNewsGallery", create.CreateNewsGallery)
 
 	// # Read
 	admin.POST("/readBarcode", read.ReadBarcode)
-
+	admin.POST("/readAuthAdmin", read.ReadAuthAdmin)
 	// # Delete
+	admin.POST("/destroyAdminPayload", delete.DestroyAdminPayload)
 
 	admin.GET("/", func(c echo.Context) error {
 
@@ -132,10 +140,17 @@ func InitServer() {
 
 	static := server.Group("/API")
 	// -> Post Methods
-	// # create
+	// # Create
 	static.POST("/createUser", create.CreateUser)
 	static.POST("/createProduct", create.CreateProduct)
 	static.POST("/createReview", create.CreateReview)
+
+	// # Read
+	static.POST("/readAuthUser", read.ReadAuthUser)
+
+	// # Update
+
+	// # Delete
 
 	// -> Get Methods
 	// # Read
@@ -146,7 +161,7 @@ func InitServer() {
 
 	})
 
-	static.GET("*", func(c echo.Context) error {
+	server.GET("*", func(c echo.Context) error {
 
 		return c.JSON(http.StatusOK, "404 Page not found.")
 
